@@ -8,18 +8,21 @@
       margin: 0;
       padding: 0;
       background: #0f120c;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       height: 100vh;
+      width: 100vw;
       overflow: hidden;
       font-family: 'Arial Black', Gadget, sans-serif;
     }
 
+    /* Bulletproof center positioning independent of body flex behavior */
     #canvas {
       display: block;
       outline: 0;
-      box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.85);
     }
 
     #pvz-soft-keyboard {
@@ -27,7 +30,7 @@
       opacity: 0; pointer-events: none; font-size: 16px;
     }
 
-    /* Plants vs Zombies Theme Loading Overlay */
+    /* Themed Loading Overlay */
     #loading-overlay {
       position: fixed;
       inset: 0;
@@ -67,7 +70,7 @@
     .progress-track {
       width: 100%;
       height: 22px;
-      background: #221a12; /* Dirt/Soil Brown */
+      background: #221a12; 
       border: 3px solid #3a2e1f;
       border-radius: 12px;
       overflow: hidden;
@@ -78,7 +81,7 @@
     #progress-fill {
       width: 0%;
       height: 100%;
-      background: linear-gradient(90deg, #5ea80f, #8be022); /* Lawn Green Gradient */
+      background: linear-gradient(90deg, #5ea80f, #8be022); 
       border-radius: 8px;
       transition: width 0.15s ease-out;
       box-shadow: 0 0 8px rgba(139, 224, 34, 0.4);
@@ -146,8 +149,6 @@
         chunks.push(value);
         
         let mbDone = (loadedBytes / (1024 * 1024)).toFixed(2);
-        
-        // Scale downloading phase to occupy 0% to 85% of the visual progress track
         let downloadPercent = Math.min(85, Math.round((loadedBytes / targetBytes) * 85));
         progressFill.style.width = downloadPercent + "%";
         loaderStatus.textContent = `GATHERING SUNLIGHT: ${mbDone} / ${mbTotal} MB`;
@@ -187,7 +188,6 @@
     }
     
     (async () => {
-      // Step 1: Download split asset components relatively from the repository
       const [pakurl] = await Promise.all([
         mergeFiles(getParts("main.pak", 1, 3), "main.pak"),
       ]);
@@ -245,10 +245,8 @@
       addEventListener("visibilitychange", () => document.hidden && sync());
       addEventListener("pagehide", sync);
 
-      // Launch compiled runtime bundle
       Module.callMain([]);
       
-      // Smooth fade-out transition instead of an abrupt element deletion
       loadingOverlay.style.opacity = "0";
       setTimeout(() => {
         loadingOverlay.remove();
